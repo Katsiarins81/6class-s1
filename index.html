@@ -1,715 +1,365 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft: Лаборатория Редстоун-Инженера</title>
+    <title>Математические Квесты — 6 класс</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.8/index.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Courier New', monospace;
-            background: #121212;
-            color: #e0e0e0;
-            background-image:
-                linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
-                url('https://www.transparenttextures.com/patterns/cubes.png');
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        header {
-            text-align: center;
-            background: #2d2d2d;
-            border: 4px solid #4a4a4a;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-
-        h1 {
-            font-family: 'Press Start 2P', cursive;
-            color: #ff4444;
-            text-shadow: 4px 4px 0 #8b0000;
-            font-size: 1.8em;
-            line-height: 1.4;
+        .btn-game {
+            transition: all 0.2s ease;
         }
-
-        .subtitle {
-            color: #aaa;
-            margin-top: 10px;
-            font-size: 1.1em;
+        .btn-game:hover {
+            transform: translateX(4px);
         }
-
-        .portal-status {
-            text-align: center;
-            margin: 30px 0;
-            padding: 20px;
-            background: #1a1a1a;
-            border: 4px dashed #555;
-            border-radius: 10px;
-            position: sticky;
-            top: -300px;
-            z-index: 100;
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
         }
-
-        .portal {
-            width: 120px;
-            height: 160px;
-            margin: 20px auto;
-            background: #2a1a2a;
-            border: 8px solid #3e2723;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3em;
-            transition: all 0.5s;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .portal.active {
-            background: linear-gradient(135deg, #9c27b0, #e040fb);
-            box-shadow: 0 0 40px #9c27b0, inset 0 0 20px #e040fb;
-            animation: portalSpin 2s linear infinite;
-        }
-
-        @keyframes portalSpin {
-            0% {
-                box-shadow: 0 0 40px #9c27b0, inset 0 0 20px #e040fb;
-            }
-
-            50% {
-                box-shadow: 0 0 60px #e040fb, inset 0 0 30px #9c27b0;
-            }
-
-            100% {
-                box-shadow: 0 0 40px #9c27b0, inset 0 0 20px #e040fb;
-            }
-        }
-
-        .crystals {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            font-size: 2em;
-        }
-
-        .crystal {
-            color: #333;
-            text-shadow: 0 0 10px #000;
-            transition: all 0.3s;
-            width: 50px;
-            height: 50px;
-            background: url("https://minecraft.wiki/images/Redstone_Dust_JE2_BE2.png?8cf17");
-            background-size: cover;
-        }
-
-        .crystal.lit {
-            color: #ff4444;
-            filter: drop-shadow(0 0 15px #ff0000);
-
-        }
-
-        .task {
-            background: #222;
-            border: 3px solid #444;
-            border-left: 6px solid #ff4444;
-            padding: 25px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .task-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .task-num {
-            background: #ff4444;
-            color: white;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            border-radius: 5px;
-        }
-
-        .task-title {
-            color: #ffcc00;
-            font-size: 1.2em;
-        }
-
-        .task-desc {
-            color: #ccc;
-            margin-bottom: 20px;
-            font-size: 1.05em;
-            line-height: 1.5;
-        }
-
-        .options {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .option {
-            background: #333;
-            border: 2px solid #555;
-            padding: 12px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .option:hover {
-            background: #444;
-            border-color: #888;
-        }
-
-        .option.selected {
-            background: #2e5c31;
-            border-color: #4caf50;
-        }
-
-        .option input {
-            transform: scale(1.3);
-            cursor: pointer;
-        }
-
-        .input-field {
-            background: #111;
-            border: 2px solid #555;
-            color: #fff;
-            padding: 12px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 400px;
-            font-family: inherit;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #ff4444;
-        }
-
-        .btn {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1.1em;
-            cursor: pointer;
-            border-radius: 5px;
-            font-family: inherit;
-            transition: all 0.2s;
-            border-bottom: 4px solid #2e7d32;
-        }
-
-        .btn:hover {
-            background: #66bb6a;
-        }
-
-        .btn:active {
-            border-bottom: 0;
-            transform: translateY(4px);
-        }
-
-        .btn:disabled {
-            background: #555;
-            border-bottom: 4px solid #333;
-            cursor: not-allowed;
-        }
-
-        .feedback {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .feedback.success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 2px solid #4caf50;
-            color: #81c784;
-            display: block;
-        }
-
-        .feedback.error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 2px solid #f44336;
-            color: #e57373;
-            display: block;
-        }
-
-        .math-text {
-            font-family: 'Times New Roman', serif;
-            font-size: 1.2em;
-            font-style: italic;
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border-left: 4px solid #ff9800;
-        }
-
-        .success-screen {
-            display: none;
-            text-align: center;
-            background: #1a472a;
-            border: 4px solid #4caf50;
-            padding: 40px;
-            margin: 30px 0;
-            border-radius: 10px;
-            animation: popIn 0.5s ease-out;
-        }
-
-        .success-screen {
-            display: none;
-            text-align: center;
-            background: #1a472a;
-            border: 4px solid #4caf50;
-            padding: 40px;
-            margin: 30px 0;
-            border-radius: 10px;
-            animation: popIn 0.5s ease-out;
-            cursor: pointer;
-            /* ← добавлено: курсор-рука */
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .success-screen:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
-        }
-
-        .fraction {
-            display: inline-block;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 0.9em;
-        }
-
-        .fraction .numerator {
-            display: block;
-            border-bottom: 1px solid #f6f0f0;
-            padding: 0 2px;
-        }
-
-        .fraction .denominator {
-            display: block;
-            padding: 0 2px;
-        }
-
-        .option {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        @keyframes popIn {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 0.6;
-            }
-
-            50% {
-                opacity: 1;
-            }
-        }
-
-        .success-screen h2 {
-            color: #4caf50;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.2em;
-            }
-
-            .task {
-                padding: 15px;
-            }
+        .hero-bg {
+            background: linear-gradient(135deg, #eef2ff 0%, #fdf4ff 50%, #ecfdf5 100%);
         }
     </style>
 </head>
+<body class="text-slate-800">
 
-<body>
-    <div class="container">
-        <header>
-            <h1>️ MINECRAFT: ЛАБОРАТОРИЯ РЕДСТОУН-ИНЖЕНЕРА</h1>
-            <p class="subtitle">Без правильных ответов портал не откроется.</p>
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    ∑
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900">МатКвест</h1>
+                    <p class="text-xs text-slate-500 hidden sm:block">6 класс</p>
+                </div>
+            </div>
+            <nav class="flex items-center gap-2 sm:gap-4">
+                <a href="#" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition">Главная</a>
+                <a href="#sections" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition">Разделы</a>
+                <a href="#" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition">О проекте</a>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">
+                    Войти
+                </button>
+            </nav>
+        </div>
+    </header>
 
-
-        </header>
-
-        <div class="portal-status">
-            <h2 style="color: #e040fb;">🌀 ПОРТАЛ В НЕЗЕР</h2>
-            <div class="portal" id="portal">🔒</div>
-            <p>Для активации портала нужно зажечь 5 редстоун-кристаллов, решив задачи.</p>
-            <div class="crystals">
-                <span class="crystal" id="c1"></span>
-                <span class="crystal" id="c2"></span>
-                <span class="crystal" id="c3"></span>
-                <span class="crystal" id="c4"></span>
-                <span class="crystal" id="c5"></span>
+    <!-- Hero Section -->
+    <section class="hero-bg py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+            <div class="fade-in">
+                <span class="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                    🎯 Новый учебный год
+                </span>
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight mb-6">
+                    Математические <br>
+                    <span class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">квесты для 6 класса</span>
+                </h2>
+                <p class="text-lg text-slate-600 mb-8 max-w-lg">
+                    Исследуй мир чисел, фигур и уравнений через увлекательные игры. Выбирай раздел, проходи квесты и становись мастером математики!
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#sections" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-200 transition transform hover:scale-105">
+                        Начать квест →
+                    </a>
+                    <a href="#" class="bg-white hover:bg-slate-50 text-slate-800 font-semibold px-6 py-3 rounded-xl border border-slate-200 transition">
+                        Как играть?
+                    </a>
+                </div>
+                <div class="flex items-center gap-6 mt-10 text-sm text-slate-600">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🎮</span>
+                        <span><strong class="text-slate-900">12+</strong> квестов</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">📚</span>
+                        <span><strong class="text-slate-900">4</strong> раздела</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">⭐</span>
+                        <span><strong class="text-slate-900">Бесплатно</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in flex justify-center">
+                <img src="https://image.qwenlm.ai/public_source/f185a07f-9f9c-42a6-b27c-2cf262728cba/11a747d06-ff57-45bb-a35a-a06f94c360ee.png" 
+                     alt="Математическое приключение" 
+                     class="w-full max-w-md drop-shadow-2xl rounded-2xl transform hover:rotate-2 transition duration-500">
             </div>
         </div>
+    </section>
 
-        <!-- ЗАДАНИЕ 1 -->
-        <div class="task" id="task1">
-            <div class="task-header">
-                <div class="task-num">1</div>
-                <div class="task-title">Калибровка редстоун-сигнала</div>
+    <!-- Sections with Games -->
+    <section id="sections" class="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-14">
+                <h3 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">Выбери свой раздел</h3>
+                <p class="text-slate-600 max-w-2xl mx-auto">Каждый раздел содержит несколько квестов разной сложности. Нажми на игру, чтобы начать приключение!</p>
             </div>
-            <p class="task-desc">Чтобы схема работала верно, нужно выбрать только правильные равенства силы сигнала.
-                Отметь все верные варианты:</p>
-            <!-- <div class="math-text">
-                а) 7/10 = 0,7 &nbsp;&nbsp;&nbsp; б) 13/100 = 0,13 <br>
-                в) 2 9/10 = 0,29 &nbsp;&nbsp;&nbsp; г) 15 15/10000 = 15,0015
-            </div> -->
-            <div class="options">
-                <label class="option"><input type="checkbox" value="a"> а) <span class="fraction"><span
-                            class="numerator">7</span><span class="denominator">10</span></span> = 0,7</label>
-                <label class="option"><input type="checkbox" value="b"> б) <span class="fraction"><span
-                            class="numerator">13</span><span class="denominator">100</span></span> = 0,13</label>
-                <label class="option"><input type="checkbox" value="c"> в) 2 <span class="fraction"><span
-                            class="numerator">9</span><span class="denominator">10</span></span> = 0,29</label>
-                <label class="option"><input type="checkbox" value="d"> г) 15 <span class="fraction"><span
-                            class="numerator">15</span><span class="denominator">10000</span></span> = 15,0015</label>
+
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <!-- Section 1: Дроби и проценты -->
+                <div class="card-hover bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border border-blue-100">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-200">
+                            ½
+                        </div>
+                        <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">5 квестов</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-2">Дроби и проценты</h4>
+                    <p class="text-slate-600 mb-6 text-sm">Научись работать с обыкновенными и десятичными дробями, решать задачи на проценты.</p>
+                    <div class="space-y-3">
+                        <a href="index1.html" class="btn-game flex items-center justify-between bg-white hover:bg-blue-50 border border-blue-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">1</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Тайна дробей</div>
+                                    <div class="text-xs text-slate-500">Сложение и вычитание</div>
+                                </div>
+                            </div>
+                            <span class="text-blue-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index2.html" class="btn-game flex items-center justify-between bg-white hover:bg-blue-50 border border-blue-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">2</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Процентный детектив</div>
+                                    <div class="text-xs text-slate-500">Задачи на проценты</div>
+                                </div>
+                            </div>
+                            <span class="text-blue-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index3.html" class="btn-game flex items-center justify-between bg-white hover:bg-blue-50 border border-blue-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">3</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Магазин скидок</div>
+                                    <div class="text-xs text-slate-500">Практика процентов</div>
+                                </div>
+                            </div>
+                            <span class="text-blue-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index_sam11.html" class="btn-game flex items-center justify-between bg-white hover:bg-blue-50 border border-blue-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">4</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">MINECRAFT: ЛАБОРАТОРИЯ РЕДСТОУН-ИНЖЕНЕРА</div>
+                                    <div class="text-xs text-slate-500">Испытание № 1: Десятичные дроби (1)</div>
+                                </div>
+                            </div>
+                            <span class="text-blue-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index_sam12.html" class="btn-game flex items-center justify-between bg-white hover:bg-blue-50 border border-blue-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">4</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">MINECRAFT: ЛАБОРАТОРИЯ РЕДСТОУН-ИНЖЕНЕРА</div>
+                                    <div class="text-xs text-slate-500">Испытание № 1: Десятичные дроби (2)</div>
+                                </div>
+                            </div>
+                            <span class="text-blue-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Section 2: Геометрия -->
+                <div class="card-hover bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-100">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-200">
+                            △
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full">3 квеста</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-2">Геометрия</h4>
+                    <p class="text-slate-600 mb-6 text-sm">Изучай фигуры, углы, площади и объёмы. Построй свой геометрический мир!</p>
+                    <div class="space-y-3">
+                        <a href="index4.html" class="btn-game flex items-center justify-between bg-white hover:bg-emerald-50 border border-emerald-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center font-bold text-sm">1</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Архитектор фигур</div>
+                                    <div class="text-xs text-slate-500">Площади и периметры</div>
+                                </div>
+                            </div>
+                            <span class="text-emerald-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index5.html" class="btn-game flex items-center justify-between bg-white hover:bg-emerald-50 border border-emerald-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center font-bold text-sm">2</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Угловой лабиринт</div>
+                                    <div class="text-xs text-slate-500">Виды углов</div>
+                                </div>
+                            </div>
+                            <span class="text-emerald-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index6.html" class="btn-game flex items-center justify-between bg-white hover:bg-emerald-50 border border-emerald-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center font-bold text-sm">3</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Объёмный мир</div>
+                                    <div class="text-xs text-slate-500">Объёмы фигур</div>
+                                </div>
+                            </div>
+                            <span class="text-emerald-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Section 3: Алгебра и уравнения -->
+                <div class="card-hover bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-14 h-14 bg-purple-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-purple-200">
+                            x
+                        </div>
+                        <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">3 квеста</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-2">Алгебра и уравнения</h4>
+                    <p class="text-slate-600 mb-6 text-sm">Реши загадки неизвестных, освой уравнения и неравенства как настоящий алгебраист.</p>
+                    <div class="space-y-3">
+                        <a href="index7.html" class="btn-game flex items-center justify-between bg-white hover:bg-purple-50 border border-purple-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center font-bold text-sm">1</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Поиск X</div>
+                                    <div class="text-xs text-slate-500">Линейные уравнения</div>
+                                </div>
+                            </div>
+                            <span class="text-purple-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index8.html" class="btn-game flex items-center justify-between bg-white hover:bg-purple-50 border border-purple-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center font-bold text-sm">2</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Координатная карта</div>
+                                    <div class="text-xs text-slate-500">Координатная плоскость</div>
+                                </div>
+                            </div>
+                            <span class="text-purple-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index9.html" class="btn-game flex items-center justify-between bg-white hover:bg-purple-50 border border-purple-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center font-bold text-sm">3</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Битва неравенств</div>
+                                    <div class="text-xs text-slate-500">Неравенства</div>
+                                </div>
+                            </div>
+                            <span class="text-purple-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Section 4: Логика и задачи -->
+                <div class="card-hover bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 border border-amber-100">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-amber-200">
+                            ?
+                        </div>
+                        <span class="bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full">3 квеста</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-2">Логика и задачи</h4>
+                    <p class="text-slate-600 mb-6 text-sm">Развивай мышление, решай олимпиадные задачи и головоломки на смекалку.</p>
+                    <div class="space-y-3">
+                        <a href="index10.html" class="btn-game flex items-center justify-between bg-white hover:bg-amber-50 border border-amber-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center font-bold text-sm">1</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Логический детектив</div>
+                                    <div class="text-xs text-slate-500">Задачи на логику</div>
+                                </div>
+                            </div>
+                            <span class="text-amber-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index11.html" class="btn-game flex items-center justify-between bg-white hover:bg-amber-50 border border-amber-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center font-bold text-sm">2</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Олимпиадный марафон</div>
+                                    <div class="text-xs text-slate-500">Сложные задачи</div>
+                                </div>
+                            </div>
+                            <span class="text-amber-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                        <a href="index12.html" class="btn-game flex items-center justify-between bg-white hover:bg-amber-50 border border-amber-200 rounded-xl p-4 group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center font-bold text-sm">3</span>
+                                <div>
+                                    <div class="font-semibold text-slate-900 text-sm">Головоломка мастера</div>
+                                    <div class="text-xs text-slate-500">Комбинаторика</div>
+                                </div>
+                            </div>
+                            <span class="text-amber-500 group-hover:translate-x-1 transition">→</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
-            <button class="btn" onclick="checkTask1()">Проверить сигнал</button>
-            <div class="feedback" id="feedback1"></div>
         </div>
+    </section>
 
-        <!-- ЗАДАНИЕ 2 -->
-        <div class="task" id="task2">
-            <div class="task-header">
-                <div class="task-num">2</div>
-                <div class="task-title">Синхронизация поршней</div>
+    <!-- Progress / CTA Section -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h3 class="text-3xl sm:text-4xl font-bold mb-4">Готов стать математическим героем?</h3>
+            <p class="text-indigo-100 text-lg mb-8">Создай аккаунт, отслеживай свой прогресс и получай достижения за каждый пройденный квест.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button class="bg-white text-indigo-600 hover:bg-indigo-50 font-semibold px-8 py-3 rounded-xl transition shadow-lg">
+                    Создать аккаунт
+                </button>
+                <button class="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold px-8 py-3 rounded-xl border border-indigo-500 transition">
+                    Узнать больше
+                </button>
             </div>
-            <p class="task-desc">Чтобы поршни выдвинулись одновременно, их ход должен иметь одинаковое количество знаков
-                после запятой. Уравняй количество знаков (допиши нули) для максимального значения (4 знака):</p>
-            <div class="math-text">
-                а) 0,8; &nbsp;&nbsp; б) 5,02; &nbsp;&nbsp; в) 13,006; &nbsp;&nbsp; г) 49,0207
-            </div>
-            <p style="margin-bottom: 10px; color: #aaa;">Введи полученные дроби через точку с запятой (например: 1,2000;
-                3,4500):</p>
-            <input type="text" class="input-field" id="input2" placeholder="1,2000; 3,4500; ...">
-            <br><br>
-            <button class="btn" onclick="checkTask2()">Синхронизировать</button>
-            <div class="feedback" id="feedback2"></div>
         </div>
+    </section>
 
-        <!-- ЗАДАНИЕ 3 -->
-        <div class="task" id="task3">
-            <div class="task-header">
-                <div class="task-num">3</div>
-                <div class="task-title">Настройка вагонетки на координатном луче</div>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+                        ∑
+                    </div>
+                    <span class="text-white font-bold text-lg">МатКвест</span>
+                </div>
+                <p class="text-sm">Увлекательные математические квесты для школьников 6 класса. Учись играя!</p>
             </div>
-            <p class="task-desc">Единичный отрезок на рельсах равен 10 клеткам (блокам). Инженеру нужно отправить
-                вагонетки в точки <strong>M(0,3)</strong>, <strong>A(0,6)</strong> и <strong>E(1,7)</strong>. Сколько
-                клеток от начала координат (нуля) нужно отложить для каждой точки?</p>
-
-            <div class="math-text">
-                M(0,3) → <input type="number" class="input-field" id="input3_m" placeholder="клеток"
-                    style="width: 120px; display: inline-block;"> клеток<br>
-                A(0,6) → <input type="number" class="input-field" id="input3_a" placeholder="клеток"
-                    style="width: 120px; display: inline-block;"> клеток<br>
-                E(1,7) → <input type="number" class="input-field" id="input3_e" placeholder="клеток"
-                    style="width: 120px; display: inline-block;"> клеток
+            <div>
+                <h5 class="text-white font-semibold mb-3">Разделы</h5>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">Дроби и проценты</a></li>
+                    <li><a href="#" class="hover:text-white transition">Геометрия</a></li>
+                    <li><a href="#" class="hover:text-white transition">Алгебра</a></li>
+                    <li><a href="#" class="hover:text-white transition">Логика</a></li>
+                </ul>
             </div>
-            <br>
-            <button class="btn" onclick="checkTask3()">Запустить вагонетки</button>
-            <div class="feedback" id="feedback3"></div>
+          
         </div>
-
-        <!-- ЗАДАНИЕ 4 -->
-        <div class="task" id="task4">
-            <div class="task-header">
-                <div class="task-num">4</div>
-                <div class="task-title">Взлом компаратора (Поиск скрытых цифр)</div>
-            </div>
-            <p class="task-desc">Вместо звёздочки (*) нужно подставить цифры, чтобы команды компаратора сработали верно.
-                Запиши все возможные цифры для каждого случая через запятую:</p>
-            <div class="math-text">
-                а) 45,*7 &lt; 45,16 &nbsp;&nbsp;&nbsp; б) 0,6*4 &gt; 0,685 <br>
-                в) 1,*7 &lt; 1,34 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; г) 82,6<span style="color:rgb(132, 21, 21)">*</span>5
-                &gt; 8<span style="color:rgb(132, 21, 21)">*</span>,687 (<span style="color:rgb(132, 21, 21)">*</span> —
-                одна и та же цифра)
-            </div>
-            <p style="margin-bottom: 5px; color: #aaa;">а) Цифры:</p>
-            <input type="text" class="input-field" id="input4a" style="margin-bottom: 10px;"
-                placeholder="Например: 5,6">
-            <p style="margin-bottom: 5px; color: #aaa;">б) Цифры:</p>
-            <input type="text" class="input-field" id="input4b" style="margin-bottom: 10px;">
-            <p style="margin-bottom: 5px; color: #aaa;">в) Цифры:</p>
-            <input type="text" class="input-field" id="input4c" style="margin-bottom: 10px;">
-            <p style="margin-bottom: 5px; color: #aaa;">г) Цифры:</p>
-            <input type="text" class="input-field" id="input4d" style="margin-bottom: 10px;">
-            <br><br>
-            <button class="btn" onclick="checkTask4()">Взломать систему</button>
-            <div class="feedback" id="feedback4"></div>
+        <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-slate-800 text-center text-sm">
+            © 2026 МатКвест. Все права защищены.
         </div>
-
-        <!-- ЗАДАНИЕ 5 -->
-        <div class="task" id="task5">
-            <div class="task-header">
-                <div class="task-num">5</div>
-                <div class="task-title">Стабилизация энергии портала</div>
-            </div>
-            <p class="task-desc">Энергия портала fluctuates (колеблется). Число <em>m</em> расположено между числами
-                0,78 и 0,85. Округли это число до десятых, чтобы стабилизировать рамку портала:</p>
-            <input type="text" class="input-field" id="input5" placeholder="Введи округлённое число">
-            <br><br>
-            <button class="btn" onclick="checkTask5()">Стабилизировать</button>
-            <div class="feedback" id="feedback5"></div>
-        </div>
-
-        <div class="success-screen" id="successScreen">
-            <h2>🎉 ПОРТАЛ АКТИВИРОВАН!</h2>
-            <p style="font-size: 1.2em; margin-bottom: 20px;">
-                Отличная работа, инженер-редстоунщик!<br>
-                Ты решил все задачи по десятичным дробям.
-            </p>
-            <p style="font-size: 1.1em;">
-                Путь в Незер открыт. Удачи в выживании! 🔥⛏️
-            </p>
-            <p style="margin-top: 25px; color: #81c784; font-size: 0.95em; animation: pulse 1.5s infinite;">
-                👆 Нажми здесь, чтобы вернуться к порталу
-            </p>
-        </div>
-
-    </div>
-    <footer>
-        <p class="subtitle" style="text-align: center; font-family: 'Press Start 2P', cursive;">Испытание № 1:
-            Десятичные дроби</p>
     </footer>
-    <script>
-        let solvedTasks = { 1: false, 2: false, 3: false, 4: false, 5: false };
 
-        function lightCrystal(num) {
-            document.getElementById(`c${num}`).classList.add('lit');
-            solvedTasks[num] = true;
-            checkAllSolved();
-        }
-
-        function showFeedback(id, message, isSuccess) {
-            const el = document.getElementById(id);
-            el.className = `feedback ${isSuccess ? 'success' : 'error'}`;
-            el.textContent = message;
-        }
-
-        function checkTask1() {
-            const checkboxes = document.querySelectorAll('#task1 input[type="checkbox"]');
-            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-
-            // Правильные: а, б, г. Неправильное: в (2 9/10 = 2,9, а не 0,29)
-            const correct = ['a', 'b', 'd'];
-            const isCorrect = selected.length === 3 && correct.every(v => selected.includes(v)) && !selected.includes('c');
-
-            if (isCorrect) {
-                showFeedback('feedback1', '✅ Верно! Сигнал откалиброван. Кристалл зажжён!', true);
-                lightCrystal(1);
-            } else {
-                showFeedback('feedback1', '❌ Ошибка в схеме! Проверь равенства. Подсказка: 2 9/10 это 2 целых и 9 десятых.', false);
-            }
-        }
-
-        function checkTask2() {
-            const input = document.getElementById('input2').value.replace(/\s/g, '');
-            const answers = ['0,8000', '5,0200', '13,0060', '49,0207'];
-            const userAnswers = input.split(';').map(s => s.trim());
-
-            const isCorrect = answers.every(ans => userAnswers.includes(ans)) && userAnswers.length === 4;
-
-            if (isCorrect) {
-                showFeedback('feedback2', '✅ Поршни синхронизированы! Кристалл зажжён!', true);
-                lightCrystal(2);
-            } else {
-                showFeedback('feedback2', '❌ Поршни работают вразнобой! Нужно дописать нули до 4 знаков после запятой.', false);
-            }
-        }
-
-        function checkTask3() {
-            const m = document.getElementById('input3_m').value.trim();
-            const a = document.getElementById('input3_a').value.trim();
-            const e = document.getElementById('input3_e').value.trim();
-
-            // 0,3 = 3 клетки (0,3 * 10 = 3)
-            // 0,6 = 6 клеток
-            // 1,7 = 17 клеток
-
-            if (m === '3' && a === '6' && e === '17') {
-                showFeedback('feedback3', '✅ Все вагонетки прибыли точно в цели! Кристалл зажжён!', true);
-                lightCrystal(3);
-            } else {
-                showFeedback('feedback3', '❌ Вагонетки уехали не туда! Помни: 1 целый отрезок = 10 клеток. Сколько клеток в 0,3? А в 0,6? А в 1,7?', false);
-            }
-        }
-        function checkTask4() {
-            // Вспомогательная функция: нормализует ввод пользователя
-            function parseDigits(inputId) {
-                const raw = document.getElementById(inputId).value;
-                // Заменяем все возможные разделители (пробелы, точки с запятой, точки) на запятые
-                // Но оставляем запятые как разделители цифр
-                const normalized = raw
-                    .replace(/\s/g, '')        // убираем пробелы
-                    .replace(/;/g, ',')        // точки с запятой → запятые
-                    .replace(/\./g, ',');      // точки → запятые (т.к. здесь только цифры 0-9)
-                // Разбиваем и фильтруем пустые строки
-                return normalized.split(',').filter(s => s !== '').sort();
-            }
-
-            const a = parseDigits('input4a');
-            const b = parseDigits('input4b');
-            const c = parseDigits('input4c');
-            const d = parseDigits('input4d');
-
-            // Правильные ответы
-            const correctA = ['0'];
-            const correctB = ['9'];
-            const correctC = ['0', '1', '2'];
-            const correctD = ['0', '1'];
-
-            // Проверяем каждый подпункт отдельно
-            const results = {
-                a: JSON.stringify(a) === JSON.stringify(correctA),
-                b: JSON.stringify(b) === JSON.stringify(correctB),
-                c: JSON.stringify(c) === JSON.stringify(correctC),
-                d: JSON.stringify(d) === JSON.stringify(correctD)
-            };
-
-            const allCorrect = results.a && results.b && results.c && results.d;
-
-            if (allCorrect) {
-                showFeedback('feedback4', '✅ Компаратор взломан! Все скрытые цифры найдены. Кристалл зажжён!', true);
-                lightCrystal(4);
-            } else {
-                // Показываем, какие именно подпункты неверны
-                const wrong = [];
-                if (!results.a) wrong.push('а)');
-                if (!results.b) wrong.push('б)');
-                if (!results.c) wrong.push('в)');
-                if (!results.d) wrong.push('г)');
-
-                showFeedback(
-                    'feedback4',
-                    `❌ Ошибка в подпункте(ах): ${wrong.join(' ')}. Проверь сравнение дробей разряд за разрядом! Не забудь вписать ВСЕ возможные цифры.`,
-                    false
-                );
-            }
-        }
-
-        function checkTask5() {
-            const input = document.getElementById('input5').value.replace(/\s/g, '').replace('.', ',');
-            // Число между 0,78 и 0,85. При округлении до десятых все они дают 0,8
-            // (0.78->0.8, 0.79->0.8, 0.80->0.8, 0.81->0.8, 0.82->0.8, 0.83->0.8, 0.84->0.8)
-
-            if (input === '0,8' || input === '0.8') {
-                showFeedback('feedback5', '✅ Энергия стабилизирована! Финальный кристалл зажжён!', true);
-                lightCrystal(5);
-            } else {
-                showFeedback('feedback5', '❌ Портал нестабилен! Посмотри на цифры в разряде сотых. Как округлить до десятых?', false);
-            }
-        }
-
-        function checkAllSolved() {
-            const allSolved = Object.values(solvedTasks).every(v => v === true);
-            if (allSolved) {
-                const portal = document.getElementById('portal');
-                portal.classList.add('active');
-                portal.textContent = '🌀';
-                document.getElementById('successScreen').style.display = 'block';
-                document.getElementById('successScreen').scrollIntoView({ behavior: 'smooth' });
-
-                // Конфетти
-                createConfetti();
-            }
-        }
-
-        function createConfetti() {
-            const colors = ['#ff4444', '#4caf50', '#ffcc00', '#e040fb', '#00bcd4'];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.width = '10px';
-                confetti.style.height = '10px';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.zIndex = '9999';
-                confetti.style.pointerEvents = 'none';
-                document.body.appendChild(confetti);
-
-                const duration = Math.random() * 3 + 2;
-                confetti.animate([
-                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-                    { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
-                ], { duration: duration * 1000, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' })
-                    .onfinish = () => confetti.remove();
-            }
-        }
-
-        // Стилизация чекбоксов
-        document.querySelectorAll('.option').forEach(opt => {
-            opt.addEventListener('click', function (e) {
-                if (e.target.tagName !== 'INPUT') {
-                    const checkbox = this.querySelector('input');
-                    checkbox.checked = !checkbox.checked;
-                }
-                this.classList.toggle('selected', this.querySelector('input').checked);
-            });
-        });
-        // Клик по победному экрану — прокрутка к порталу
-        document.getElementById('successScreen').addEventListener('click', function () {
-            document.querySelector('.portal-status').scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-
-            // Дополнительно: эффект "вспышки" портала
-            const portal = document.getElementById('portal');
-            portal.style.transform = 'scale(1.3)';
-            setTimeout(() => {
-                portal.style.transform = 'scale(1)';
-            }, 400);
-        });
-    </script>
 </body>
-
 </html>
+
